@@ -1,0 +1,2265 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DRION — Autonomous Enterprise SaaS Workspace</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              drion: {
+                black: "#000000",
+                dark: "#0a0a0c",
+                card: "#121215",
+                border: "#222226",
+                muted: "#8e8e93",
+                lightBg: "#f4f4f7",
+                lightCard: "#ffffff",
+                lightBorder: "#e2e2e8",
+                lightText: "#1c1c1e",
+                lightMuted: "#636366",
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <!-- Font Awesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
+
+      body,
+      input,
+      select,
+      button,
+      textarea {
+        font-family:
+          "Plus Jakarta Sans",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+      }
+
+      :root {
+        --bg-main: #060608;
+        --bg-card: #0f0f13;
+        --bg-card-sub: #16161c;
+        --bg-input: #141419;
+        --bg-hover: #1c1c24;
+        --border-color: rgba(255, 255, 255, 0.1);
+        --border-highlight: rgba(255, 255, 255, 0.35);
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --text-muted: #64748b;
+        --accent-glow: rgba(255, 255, 255, 0.08);
+        --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+        --chart-line: #ffffff;
+        --chart-grid: rgba(255, 255, 255, 0.07);
+      }
+
+      html.light {
+        --bg-main: #f1f5f9;
+        --bg-card: #ffffff;
+        --bg-card-sub: #f8fafc;
+        --bg-input: #ffffff;
+        --bg-hover: #f1f5f9;
+        --border-color: rgba(0, 0, 0, 0.1);
+        --border-highlight: rgba(0, 0, 0, 0.35);
+        --text-primary: #0f172a;
+        --text-secondary: #475569;
+        --text-muted: #94a3b8;
+        --accent-glow: rgba(0, 0, 0, 0.05);
+        --card-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.05);
+        --chart-line: #0f172a;
+        --chart-grid: rgba(0, 0, 0, 0.07);
+      }
+
+      body {
+        background-color: var(--bg-main);
+        color: var(--text-primary);
+        overflow-x: hidden;
+        min-height: 100vh;
+        transition:
+          background-color 0.25s ease,
+          color 0.25s ease;
+      }
+
+      .drion-card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
+        box-shadow: var(--card-shadow);
+        transition:
+          background-color 0.25s ease,
+          border-color 0.25s ease;
+      }
+
+      .drion-card-sub {
+        background-color: var(--bg-card-sub);
+        border: 1px solid var(--border-color);
+      }
+
+      .drion-card-interactive {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
+        box-shadow: var(--card-shadow);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .drion-card-interactive:hover {
+        border-color: var(--border-highlight);
+        background-color: var(--bg-hover);
+        transform: translateY(-1px);
+      }
+
+      .drion-input {
+        background-color: var(--bg-input);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        transition:
+          border-color 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .drion-input:focus {
+        border-color: var(--border-highlight);
+        outline: none;
+        box-shadow: 0 0 0 3px var(--accent-glow);
+      }
+
+      .drion-btn-primary {
+        background-color: var(--text-primary);
+        color: var(--bg-main);
+        border: 1px solid var(--text-primary);
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        transition: all 0.2s ease;
+      }
+
+      .drion-btn-primary:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+
+      .drion-btn-secondary {
+        background-color: var(--bg-card-sub);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+        transition: all 0.2s ease;
+      }
+
+      .drion-btn-secondary:hover {
+        background-color: var(--bg-hover);
+        border-color: var(--border-highlight);
+      }
+
+      .selectable-active {
+        border-color: var(--text-primary) !important;
+        background-color: var(--bg-hover) !important;
+        box-shadow: 0 0 15px var(--accent-glow);
+      }
+
+      .text-theme-secondary {
+        color: var(--text-secondary);
+      }
+
+      .text-theme-muted {
+        color: var(--text-muted);
+      }
+
+      /* Startup Animation Keyframes */
+      @keyframes fadeInScale {
+        0% {
+          opacity: 0;
+          transform: scale(0.96) translateY(8px);
+          letter-spacing: 0.25em;
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+          letter-spacing: 0.4em;
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1.02) translateY(-2px);
+          letter-spacing: 0.42em;
+        }
+      }
+
+      @keyframes fadeInSubtle {
+        0% {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        100% {
+          opacity: 0.8;
+          transform: translateY(0);
+        }
+      }
+
+      .animate-startup-title {
+        animation: fadeInScale 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+
+      .animate-startup-tagline {
+        animation: fadeInSubtle 1s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+        opacity: 0;
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg-main);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--border-highlight);
+      }
+    </style>
+  </head>
+  <body class="selection:bg-neutral-800 selection:text-white">
+    <!-- OPENING ANIMATION -->
+    <div
+      id="startupSplash"
+      class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black text-white px-4"
+    >
+      <div class="text-center max-w-xl">
+        <h1
+          class="text-5xl sm:text-7xl font-extrabold tracking-widest uppercase animate-startup-title mb-4"
+        >
+          DRION
+        </h1>
+        <p
+          class="text-xs sm:text-sm text-neutral-400 font-medium tracking-widest animate-startup-tagline uppercase"
+        >
+          Autonomous Enterprise Intelligence & Multi-Region SaaS
+        </p>
+        <div
+          class="mt-8 flex justify-center items-center space-x-2 animate-startup-tagline"
+        >
+          <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
+          <span class="text-xs tracking-widest text-neutral-500 uppercase"
+            >Initializing System...</span
+          >
+        </div>
+      </div>
+    </div>
+
+    <div id="appContainer" class="hidden min-h-screen flex flex-col">
+      <!-- Toast Notifications Area -->
+      <div
+        id="toastContainer"
+        class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-md pointer-events-none"
+      ></div>
+
+      <!-- AUTHENTICATION PAGE (VIEW 1) -->
+      <div
+        id="authView"
+        class="min-h-screen flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden"
+      >
+        <div class="w-full max-w-2xl relative z-10">
+          <!-- Brand Header -->
+          <div class="text-center mb-8">
+            <div class="inline-flex items-center space-x-3 mb-2">
+              <i class="fa-solid fa-cube text-3xl"></i>
+              <h1
+                class="text-4xl sm:text-5xl font-extrabold tracking-widest uppercase"
+              >
+                DRION
+              </h1>
+            </div>
+            <p
+              class="text-xs sm:text-sm text-theme-secondary font-medium tracking-widest uppercase"
+            >
+              Enterprise SaaS Operations Platform
+            </p>
+          </div>
+
+          <!-- Auth Card Container -->
+          <div class="drion-card rounded-2xl p-6 sm:p-10 border shadow-2xl">
+            <!-- Auth Mode Tabs -->
+            <div
+              class="flex border-b border-neutral-700/50 pb-4 mb-8 justify-center gap-8"
+            >
+              <button
+                id="tabSignIn"
+                type="button"
+                onclick="switchAuthTab('signin')"
+                class="text-base sm:text-lg font-bold tracking-wider uppercase pb-2 border-b-2 border-current text-primary"
+              >
+                Sign In
+              </button>
+              <button
+                id="tabSignUp"
+                type="button"
+                onclick="switchAuthTab('signup')"
+                class="text-base sm:text-lg font-bold tracking-wider uppercase pb-2 border-b-2 border-transparent text-theme-muted hover:text-theme-secondary"
+              >
+                Sign Up
+              </button>
+            </div>
+
+            <!-- REGION SELECTION -->
+            <div class="mb-8">
+              <label
+                class="block text-xs uppercase tracking-widest text-theme-secondary font-bold mb-3"
+              >
+                <i class="fa-solid fa-globe mr-1"></i> Select Operating Region
+              </label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div
+                  id="regionIndia"
+                  onclick="selectAuthRegion('India')"
+                  class="drion-card-interactive p-4 rounded-xl flex items-center space-x-4 selectable-active"
+                >
+                  <span class="text-3xl">🇮🇳</span>
+                  <div>
+                    <h4 class="font-bold text-sm">India Cluster</h4>
+                    <p class="text-xs text-theme-secondary">
+                      INR (₹) • IST UTC+5:30
+                    </p>
+                  </div>
+                </div>
+                <div
+                  id="regionUAE"
+                  onclick="selectAuthRegion('UAE')"
+                  class="drion-card-interactive p-4 rounded-xl flex items-center space-x-4"
+                >
+                  <span class="text-3xl">🇦🇪</span>
+                  <div>
+                    <h4 class="font-bold text-sm">UAE Cluster</h4>
+                    <p class="text-xs text-theme-secondary">
+                      AED (د.إ) • GST UTC+4:00
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ROLE SELECTION -->
+            <div class="mb-8">
+              <label
+                class="block text-xs uppercase tracking-widest text-theme-secondary font-bold mb-3"
+              >
+                <i class="fa-solid fa-user-shield mr-1"></i> Select Workspace
+                Role
+              </label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div
+                  id="roleOwner"
+                  onclick="selectAuthRole('Owner')"
+                  class="drion-card-interactive p-4 rounded-xl flex items-center space-x-3 selectable-active"
+                >
+                  <span class="text-2xl">👑</span>
+                  <div>
+                    <h4 class="font-bold text-sm">Business Owner</h4>
+                    <p class="text-xs text-theme-secondary">
+                      Full Financials & Analytics
+                    </p>
+                  </div>
+                </div>
+                <div
+                  id="roleManager"
+                  onclick="selectAuthRole('Manager')"
+                  class="drion-card-interactive p-4 rounded-xl flex items-center space-x-3"
+                >
+                  <span class="text-2xl">🛠️</span>
+                  <div>
+                    <h4 class="font-bold text-sm">Manager / Ops</h4>
+                    <p class="text-xs text-theme-secondary">
+                      Maintenance & Operations
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Auth Form Fields -->
+            <form
+              id="authForm"
+              onsubmit="handleAuthSubmit(event)"
+              class="space-y-5"
+            >
+              <div id="signupNameGroup" class="hidden">
+                <label
+                  class="block text-xs uppercase tracking-wider text-theme-secondary mb-1"
+                  >Full Name / Corporate Entity</label
+                >
+                <input
+                  type="text"
+                  id="authName"
+                  placeholder="e.g. Alexander Vance"
+                  class="w-full drion-input rounded-xl px-4 py-3 text-sm"
+                />
+              </div>
+
+              <div>
+                <label
+                  class="block text-xs uppercase tracking-wider text-theme-secondary mb-1"
+                  >Work Email Address</label
+                >
+                <input
+                  type="email"
+                  id="authEmail"
+                  required
+                  value="exec@drion-enterprise.com"
+                  placeholder="name@company.com"
+                  class="w-full drion-input rounded-xl px-4 py-3 text-sm"
+                />
+              </div>
+
+              <div>
+                <label
+                  class="block text-xs uppercase tracking-wider text-theme-secondary mb-1"
+                  >Password</label
+                >
+                <div class="relative">
+                  <input
+                    type="password"
+                    id="authPassword"
+                    required
+                    value="••••••••••••"
+                    placeholder="Enter secure password"
+                    class="w-full drion-input rounded-xl px-4 py-3 text-sm pr-10"
+                  />
+                  <button
+                    type="button"
+                    onclick="togglePasswordVisibility()"
+                    class="absolute right-3 top-3 text-theme-muted hover:text-theme-secondary"
+                  >
+                    <i id="passwordEye" class="fa-solid fa-eye"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div
+                class="flex items-center justify-between text-xs text-theme-secondary pt-1"
+              >
+                <label class="flex items-center space-x-2 cursor-pointer">
+                  <input type="checkbox" checked class="rounded drion-input" />
+                  <span>Remember active session</span>
+                </label>
+                <a
+                  href="#"
+                  onclick="
+                    showToast(
+                      'Password reset link sent to registered email',
+                      'info',
+                    )
+                  "
+                  class="underline hover:text-primary"
+                  >Forgot Password?</a
+                >
+              </div>
+
+              <button
+                type="submit"
+                id="authSubmitBtn"
+                class="w-full drion-btn-primary rounded-xl py-3.5 text-center text-xs uppercase font-bold tracking-widest mt-4"
+              >
+                Access Enterprise Workspace
+              </button>
+            </form>
+
+            <!-- Fast Demo Pre-fills -->
+            <div
+              class="mt-8 pt-6 border-t border-neutral-700/50 flex flex-wrap items-center justify-between gap-3 text-xs text-theme-secondary"
+            >
+              <span class="font-semibold">Quick Demo Presets:</span>
+              <div class="flex space-x-2">
+                <button
+                  type="button"
+                  onclick="loadDemoAccount('Owner', 'India')"
+                  class="drion-btn-secondary px-3 py-1.5 rounded-lg font-semibold"
+                >
+                  👑 Owner (India)
+                </button>
+                <button
+                  type="button"
+                  onclick="loadDemoAccount('Manager', 'UAE')"
+                  class="drion-btn-secondary px-3 py-1.5 rounded-lg font-semibold"
+                >
+                  🛠️ Manager (UAE)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <p
+            class="text-center text-xs text-theme-muted mt-6 uppercase tracking-wider font-medium"
+          >
+            DRION Cloud Platform v4.8 • Multi-Tenant Secured System
+          </p>
+        </div>
+      </div>
+
+      <!-- MAIN APPLICATION WORKSPACE (VIEW 2) -->
+      <div
+        id="workspaceView"
+        class="hidden flex-1 flex flex-col md:flex-row min-h-screen relative"
+      >
+        <!-- MOBILE SIDEBAR OVERLAY BACKDROP -->
+        <div
+          id="sidebarBackdrop"
+          onclick="closeMobileSidebar()"
+          class="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 hidden md:hidden"
+        ></div>
+
+        <!-- SIDEBAR NAVIGATION -->
+        <aside
+          id="sidebar"
+          class="fixed md:static inset-y-0 left-0 w-64 drion-card border-r flex flex-col justify-between shrink-0 z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
+        >
+          <div>
+            <!-- Sidebar Brand Header -->
+            <div
+              class="p-6 border-b border-neutral-700/40 flex items-center justify-between"
+            >
+              <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-cube text-xl"></i>
+                <span class="font-extrabold text-xl tracking-widest uppercase"
+                  >DRION</span
+                >
+              </div>
+              <span
+                id="activeRegionBadge"
+                class="text-xs px-2.5 py-1 rounded-md border border-neutral-700 drion-card-sub font-bold"
+              >
+                🇮🇳 IND
+              </span>
+            </div>
+
+            <!-- Active User Role Card -->
+            <div
+              class="p-4 mx-3 my-4 rounded-xl drion-card-sub flex items-center space-x-3"
+            >
+              <div
+                id="userAvatar"
+                class="w-10 h-10 rounded-full border border-neutral-700/60 flex items-center justify-center text-sm font-bold drion-card shrink-0"
+              >
+                AV
+              </div>
+              <div class="overflow-hidden">
+                <h4 id="userNameDisplay" class="font-bold text-sm truncate">
+                  Alexander Vance
+                </h4>
+                <p
+                  id="userRoleDisplay"
+                  class="text-xs text-theme-secondary truncate"
+                >
+                  👑 Business Owner
+                </p>
+              </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="px-3 space-y-1">
+              <button
+                onclick="navigateTo('dashboard')"
+                id="navDashboard"
+                class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm text-left transition font-semibold drion-btn-secondary selectable-active"
+              >
+                <i class="fa-solid fa-chart-line w-5 text-center"></i>
+                <span>Executive Dashboard</span>
+              </button>
+
+              <button
+                onclick="navigateTo('maintenance')"
+                id="navMaintenance"
+                class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm text-left transition text-theme-secondary hover:text-primary drion-btn-secondary border-transparent"
+              >
+                <i class="fa-solid fa-wrench w-5 text-center"></i>
+                <span>Maintenance Hub</span>
+                <span
+                  id="maintenanceBadgeCount"
+                  class="ml-auto text-xs px-2 py-0.5 rounded-full bg-red-900/40 text-red-400 border border-red-700/50 font-bold"
+                  >3</span
+                >
+              </button>
+
+              <button
+                onclick="navigateTo('business')"
+                id="navBusiness"
+                class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm text-left transition text-theme-secondary hover:text-primary drion-btn-secondary border-transparent"
+              >
+                <i class="fa-solid fa-building-user w-5 text-center"></i>
+                <span>Business Operations</span>
+              </button>
+
+              <button
+                onclick="navigateTo('settings')"
+                id="navSettings"
+                class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm text-left transition text-theme-secondary hover:text-primary drion-btn-secondary border-transparent"
+              >
+                <i class="fa-solid fa-sliders w-5 text-center"></i>
+                <span>Platform Settings</span>
+              </button>
+            </nav>
+          </div>
+
+          <!-- Sidebar Footer & Controls -->
+          <div class="p-4 border-t border-neutral-700/40 space-y-3">
+            <div
+              class="flex items-center justify-between text-xs text-theme-secondary px-2"
+            >
+              <span>Theme Mode</span>
+              <button
+                onclick="toggleTheme()"
+                class="drion-btn-secondary px-3 py-1.5 rounded-lg flex items-center space-x-2 text-xs font-semibold"
+              >
+                <i id="themeToggleIcon" class="fa-solid fa-moon"></i>
+                <span id="themeToggleText">Dark</span>
+              </button>
+            </div>
+
+            <button
+              onclick="handleLogout()"
+              class="w-full drion-btn-secondary py-2.5 rounded-xl text-xs uppercase font-bold tracking-wider flex items-center justify-center space-x-2 text-red-500 hover:text-red-400"
+            >
+              <i class="fa-solid fa-right-from-bracket"></i>
+              <span>Sign Out</span>
+            </button>
+          </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+          <!-- TOP HEADER -->
+          <header
+            class="drion-card border-b px-4 sm:px-6 py-4 flex items-center justify-between sticky top-0 z-20 backdrop-blur-md"
+          >
+            <div class="flex items-center space-x-3">
+              <button
+                onclick="toggleMobileSidebar()"
+                class="md:hidden drion-btn-secondary p-2.5 rounded-xl text-sm"
+              >
+                <i class="fa-solid fa-bars"></i>
+              </button>
+              <h2
+                id="pageTitle"
+                class="text-xl sm:text-2xl font-bold tracking-tight"
+              >
+                Executive Dashboard
+              </h2>
+            </div>
+
+            <div class="flex items-center space-x-3">
+              <!-- Region Switcher Quick Dropdown -->
+              <div class="relative">
+                <button
+                  onclick="toggleRegionDropdown()"
+                  class="drion-btn-secondary px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center space-x-2"
+                >
+                  <span id="headerRegionFlag">🇮🇳</span>
+                  <span id="headerRegionText" class="hidden sm:inline"
+                    >India (INR)</span
+                  >
+                  <i class="fa-solid fa-chevron-down text-xs opacity-60"></i>
+                </button>
+
+                <div
+                  id="regionDropdown"
+                  class="hidden absolute right-0 mt-2 w-48 drion-card rounded-xl p-2 shadow-2xl z-50 border space-y-1"
+                >
+                  <button
+                    onclick="switchRegion('India')"
+                    class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold hover:bg-neutral-800/40 flex items-center space-x-2"
+                  >
+                    <span>🇮🇳</span>
+                    <span>India Cluster (₹)</span>
+                  </button>
+                  <button
+                    onclick="switchRegion('UAE')"
+                    class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold hover:bg-neutral-800/40 flex items-center space-x-2"
+                  >
+                    <span>🇦🇪</span>
+                    <span>UAE Cluster (AED)</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Notifications Trigger Button -->
+              <button
+                onclick="toggleNotificationsDrawer()"
+                class="relative drion-btn-secondary p-2.5 rounded-xl text-sm"
+                title="System Notifications"
+              >
+                <i class="fa-solid fa-bell"></i>
+                <span
+                  id="unreadNotifBadge"
+                  class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center"
+                  >2</span
+                >
+              </button>
+
+              <!-- Theme Toggle Quick Switcher -->
+              <button
+                onclick="toggleTheme()"
+                class="drion-btn-secondary p-2.5 rounded-xl text-sm"
+                title="Toggle Light/Dark Theme"
+              >
+                <i id="headerThemeIcon" class="fa-solid fa-moon"></i>
+              </button>
+            </div>
+          </header>
+
+          <!-- WORKSPACE PAGE VIEWS CONTAINER -->
+          <div class="p-4 sm:p-6 space-y-8 flex-1">
+            <!-- VIEW 1: DASHBOARD -->
+            <section id="viewDashboard" class="space-y-8">
+              <!-- Role Greeting Alert Banner -->
+              <div
+                class="drion-card p-6 rounded-2xl border flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+              >
+                <div>
+                  <span
+                    class="text-xs uppercase tracking-widest text-theme-secondary font-bold"
+                    >Active Operational Workspace</span
+                  >
+                  <h3 id="welcomeHeadline" class="text-2xl font-bold mt-1">
+                    Welcome back, Alexander Vance
+                  </h3>
+                  <p
+                    id="welcomeSubtext"
+                    class="text-xs sm:text-sm text-theme-secondary mt-1"
+                  >
+                    Showing real-time telemetry, revenue performance, and
+                    facility health for India operations.
+                  </p>
+                </div>
+                <div class="flex items-center space-x-3 shrink-0">
+                  <button
+                    onclick="triggerSystemAudit()"
+                    class="drion-btn-secondary px-4 py-2.5 rounded-xl text-xs uppercase tracking-wider font-bold"
+                  >
+                    <i class="fa-solid fa-arrows-rotate mr-2"></i> Sync
+                    Telemetry
+                  </button>
+                  <button
+                    onclick="openNewTicketModal()"
+                    class="drion-btn-primary px-4 py-2.5 rounded-xl text-xs uppercase tracking-wider font-bold"
+                  >
+                    + Dispatch Request
+                  </button>
+                </div>
+              </div>
+
+              <!-- Key Performance Indicator Cards -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="drion-card p-5 rounded-2xl border">
+                  <div
+                    class="flex justify-between items-start text-theme-secondary mb-3"
+                  >
+                    <span class="text-xs uppercase font-bold tracking-wider"
+                      >Gross Monthly Revenue</span
+                    >
+                    <i class="fa-solid fa-chart-line"></i>
+                  </div>
+                  <div
+                    id="kpiRevenue"
+                    class="text-2xl sm:text-3xl font-extrabold tracking-tight"
+                  >
+                    ₹ 14,850,000
+                  </div>
+                  <div
+                    class="mt-2 text-xs text-emerald-500 font-bold flex items-center space-x-1"
+                  >
+                    <i class="fa-solid fa-arrow-trend-up"></i>
+                    <span>+14.2% vs previous quarter</span>
+                  </div>
+                </div>
+
+                <div class="drion-card p-5 rounded-2xl border">
+                  <div
+                    class="flex justify-between items-start text-theme-secondary mb-3"
+                  >
+                    <span class="text-xs uppercase font-bold tracking-wider"
+                      >Active Operations</span
+                    >
+                    <i class="fa-solid fa-sitemap"></i>
+                  </div>
+                  <div
+                    id="kpiLocations"
+                    class="text-2xl sm:text-3xl font-extrabold tracking-tight"
+                  >
+                    12 Hubs
+                  </div>
+                  <div class="mt-2 text-xs text-theme-secondary font-medium">
+                    99.8% System Uptime
+                  </div>
+                </div>
+
+                <div class="drion-card p-5 rounded-2xl border">
+                  <div
+                    class="flex justify-between items-start text-theme-secondary mb-3"
+                  >
+                    <span class="text-xs uppercase font-bold tracking-wider"
+                      >Maintenance Tickets</span
+                    >
+                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                  </div>
+                  <div
+                    id="kpiTickets"
+                    class="text-2xl sm:text-3xl font-extrabold tracking-tight"
+                  >
+                    5 Active
+                  </div>
+                  <div
+                    class="mt-2 text-xs text-amber-500 font-bold flex items-center space-x-1"
+                  >
+                    <i class="fa-solid fa-clock"></i>
+                    <span>1 Urgent priority pending</span>
+                  </div>
+                </div>
+
+                <div class="drion-card p-5 rounded-2xl border">
+                  <div
+                    class="flex justify-between items-start text-theme-secondary mb-3"
+                  >
+                    <span class="text-xs uppercase font-bold tracking-wider"
+                      >Operating Margin</span
+                    >
+                    <i class="fa-solid fa-percent"></i>
+                  </div>
+                  <div
+                    id="kpiMargin"
+                    class="text-2xl sm:text-3xl font-extrabold tracking-tight"
+                  >
+                    38.4%
+                  </div>
+                  <div class="mt-2 text-xs text-emerald-500 font-bold">
+                    +2.1% efficiency optimization
+                  </div>
+                </div>
+              </div>
+
+              <!-- Real-time Interactive Analytics Chart -->
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div
+                  class="lg:col-span-2 drion-card p-6 rounded-2xl border flex flex-col justify-between"
+                >
+                  <div class="flex items-center justify-between mb-6">
+                    <div>
+                      <h4 class="font-bold text-lg">
+                        Financial Performance & Facility Yield
+                      </h4>
+                      <p class="text-xs text-theme-secondary">
+                        Monthly breakdown across enterprise business units
+                      </p>
+                    </div>
+                    <div class="flex space-x-2 text-xs">
+                      <span
+                        class="px-3 py-1 rounded-lg border border-neutral-700/60 drion-card-sub font-bold"
+                        >2026 YTD</span
+                      >
+                    </div>
+                  </div>
+                  <div class="w-full h-64 relative">
+                    <canvas
+                      id="analyticsChart"
+                      class="w-full h-full block"
+                    ></canvas>
+                  </div>
+                </div>
+
+                <!-- Live Activity Feed -->
+                <div
+                  class="drion-card p-6 rounded-2xl border flex flex-col justify-between"
+                >
+                  <div>
+                    <h4 class="font-bold text-lg mb-4">
+                      Live Operational Telemetry
+                    </h4>
+                    <div class="space-y-4 text-xs">
+                      <div
+                        class="flex items-start space-x-3 pb-3 border-b border-neutral-700/40"
+                      >
+                        <div
+                          class="p-2 rounded-lg drion-card-sub text-emerald-500 shrink-0"
+                        >
+                          <i class="fa-solid fa-check"></i>
+                        </div>
+                        <div>
+                          <p class="font-bold text-sm">
+                            HVAC System Calibrated
+                          </p>
+                          <p class="text-theme-secondary">
+                            Dubai Hub • Automated Dispatch
+                          </p>
+                          <span class="text-[10px] text-theme-muted"
+                            >12 mins ago</span
+                          >
+                        </div>
+                      </div>
+
+                      <div
+                        class="flex items-start space-x-3 pb-3 border-b border-neutral-700/40"
+                      >
+                        <div
+                          class="p-2 rounded-lg drion-card-sub text-amber-500 shrink-0"
+                        >
+                          <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <div>
+                          <p class="font-bold text-sm">
+                            Elevator #4 Service Alert
+                          </p>
+                          <p class="text-theme-secondary">
+                            Mumbai Bay Hub • High Priority
+                          </p>
+                          <span class="text-[10px] text-theme-muted"
+                            >45 mins ago</span
+                          >
+                        </div>
+                      </div>
+
+                      <div class="flex items-start space-x-3">
+                        <div
+                          class="p-2 rounded-lg drion-card-sub text-blue-500 shrink-0"
+                        >
+                          <i class="fa-solid fa-file-invoice"></i>
+                        </div>
+                        <div>
+                          <p class="font-bold text-sm">
+                            Monthly Revenue Reconciled
+                          </p>
+                          <p class="text-theme-secondary">
+                            Regional Accounting Executed
+                          </p>
+                          <span class="text-[10px] text-theme-muted"
+                            >2 hours ago</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onclick="navigateTo('maintenance')"
+                    class="w-full drion-btn-secondary py-2.5 rounded-xl text-xs uppercase font-bold tracking-wider mt-4"
+                  >
+                    View Detailed Dispatch Hub
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <!-- VIEW 2: MAINTENANCE HUB -->
+            <section id="viewMaintenance" class="hidden space-y-6">
+              <!-- Maintenance Top Header Bar -->
+              <div
+                class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+              >
+                <div>
+                  <h3 class="text-2xl font-bold">
+                    Facility Maintenance & Work Orders
+                  </h3>
+                  <p class="text-xs text-theme-secondary">
+                    Track active tickets, dispatch technicians, and audit
+                    equipment logs.
+                  </p>
+                </div>
+                <button
+                  onclick="openNewTicketModal()"
+                  class="drion-btn-primary px-5 py-3 rounded-xl text-xs uppercase font-bold tracking-widest shrink-0"
+                >
+                  + Issue Work Order
+                </button>
+              </div>
+
+              <!-- Maintenance Filter Controls -->
+              <div
+                class="drion-card p-4 rounded-2xl border flex flex-wrap items-center justify-between gap-4"
+              >
+                <div class="flex flex-wrap items-center gap-2">
+                  <button
+                    onclick="filterTickets('ALL')"
+                    id="filterAll"
+                    class="px-4 py-2 rounded-xl text-xs font-bold drion-btn-secondary selectable-active"
+                  >
+                    All Orders
+                  </button>
+                  <button
+                    onclick="filterTickets('CRITICAL')"
+                    id="filterCritical"
+                    class="px-4 py-2 rounded-xl text-xs font-bold drion-btn-secondary border-transparent"
+                  >
+                    Critical Priority
+                  </button>
+                  <button
+                    onclick="filterTickets('IN_PROGRESS')"
+                    id="filterInProgress"
+                    class="px-4 py-2 rounded-xl text-xs font-bold drion-btn-secondary border-transparent"
+                  >
+                    In Dispatch
+                  </button>
+                  <button
+                    onclick="filterTickets('RESOLVED')"
+                    id="filterResolved"
+                    class="px-4 py-2 rounded-xl text-xs font-bold drion-btn-secondary border-transparent"
+                  >
+                    Completed
+                  </button>
+                </div>
+
+                <div class="relative min-w-[240px]">
+                  <input
+                    type="text"
+                    id="ticketSearch"
+                    oninput="searchTickets()"
+                    placeholder="Search work orders..."
+                    class="w-full drion-input rounded-xl px-4 py-2 text-xs pr-8"
+                  />
+                  <i
+                    class="fa-solid fa-magnifying-glass absolute right-3 top-2.5 text-xs text-theme-muted"
+                  ></i>
+                </div>
+              </div>
+
+              <!-- Maintenance Ticket Data Table -->
+              <div class="drion-card rounded-2xl border overflow-hidden">
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left border-collapse">
+                    <thead>
+                      <tr
+                        class="border-b border-neutral-700/40 text-xs text-theme-secondary uppercase tracking-wider drion-card-sub"
+                      >
+                        <th class="p-4 font-bold">Ticket ID</th>
+                        <th class="p-4 font-bold">Asset / Equipment</th>
+                        <th class="p-4 font-bold">Facility Location</th>
+                        <th class="p-4 font-bold">Priority</th>
+                        <th class="p-4 font-bold">Assigned Tech</th>
+                        <th class="p-4 font-bold">Status</th>
+                        <th class="p-4 text-right font-bold">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody
+                      id="ticketTableBody"
+                      class="divide-y divide-neutral-700/30 text-sm"
+                    >
+                      <!-- Rendered dynamically by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+
+            <!-- VIEW 3: BUSINESS OPERATIONS -->
+            <section id="viewBusiness" class="hidden space-y-6">
+              <div>
+                <h3 class="text-2xl font-bold">
+                  Business Units & Regional Assets
+                </h3>
+                <p class="text-xs text-theme-secondary">
+                  Overview of physical locations, staffing rosters, and
+                  infrastructure performance.
+                </p>
+              </div>
+
+              <div
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                id="businessUnitsGrid"
+              >
+                <!-- Rendered dynamically based on region -->
+              </div>
+            </section>
+
+            <!-- VIEW 4: PLATFORM SETTINGS -->
+            <section id="viewSettings" class="hidden space-y-6">
+              <div>
+                <h3 class="text-2xl font-bold">
+                  Workspace Preferences & Security
+                </h3>
+                <p class="text-xs text-theme-secondary">
+                  Manage region defaults, role permissions, theme
+                  customizations, and system keys.
+                </p>
+              </div>
+
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Profile & Account Info -->
+                <div class="drion-card p-6 rounded-2xl border space-y-4">
+                  <h4
+                    class="font-bold text-lg border-b border-neutral-700/40 pb-3"
+                  >
+                    User Identity
+                  </h4>
+                  <div class="space-y-3 text-sm">
+                    <div>
+                      <label
+                        class="text-xs text-theme-secondary font-semibold block mb-1"
+                        >Full Name</label
+                      >
+                      <input
+                        type="text"
+                        id="settingsName"
+                        class="w-full drion-input rounded-xl px-4 py-2 text-sm"
+                        value="Alexander Vance"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        class="text-xs text-theme-secondary font-semibold block mb-1"
+                        >Corporate Email</label
+                      >
+                      <input
+                        type="email"
+                        id="settingsEmail"
+                        class="w-full drion-input rounded-xl px-4 py-2 text-sm"
+                        value="exec@drion-enterprise.com"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        class="text-xs text-theme-secondary font-semibold block mb-1"
+                        >Role Designation</label
+                      >
+                      <input
+                        type="text"
+                        id="settingsRole"
+                        readonly
+                        class="w-full drion-input rounded-xl px-4 py-2 text-sm opacity-60 cursor-not-allowed"
+                        value="Business Owner"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    onclick="
+                      showToast(
+                        'Profile settings updated successfully',
+                        'success',
+                      )
+                    "
+                    class="drion-btn-primary w-full py-2.5 rounded-xl text-xs uppercase font-bold tracking-wider mt-2"
+                  >
+                    Save Profile
+                  </button>
+                </div>
+
+                <!-- Appearance & Theme Settings -->
+                <div class="drion-card p-6 rounded-2xl border space-y-4">
+                  <h4
+                    class="font-bold text-lg border-b border-neutral-700/40 pb-3"
+                  >
+                    Visual Theme
+                  </h4>
+
+                  <div class="space-y-4">
+                    <div>
+                      <label
+                        class="text-xs text-theme-secondary font-semibold block mb-2"
+                        >Display Theme Mode</label
+                      >
+                      <div class="grid grid-cols-2 gap-3">
+                        <button
+                          onclick="setTheme('dark')"
+                          id="themeBtnDark"
+                          class="drion-card-interactive p-3 rounded-xl text-center border font-bold text-xs selectable-active"
+                        >
+                          <i class="fa-solid fa-moon mr-2"></i> Dark Mode
+                        </button>
+                        <button
+                          onclick="setTheme('light')"
+                          id="themeBtnLight"
+                          class="drion-card-interactive p-3 rounded-xl text-center border font-bold text-xs"
+                        >
+                          <i class="fa-solid fa-sun mr-2"></i> Light Mode
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label
+                        class="text-xs text-theme-secondary font-semibold block mb-2"
+                        >Typography Engine</label
+                      >
+                      <div
+                        class="p-3 drion-card-sub rounded-xl border border-neutral-700/40 text-xs"
+                      >
+                        <span class="font-bold block text-sm"
+                          >Plus Jakarta Sans (Active)</span
+                        >
+                        <span class="text-theme-secondary text-[11px]"
+                          >Optimized for modern SaaS dashboards & telemetry
+                          views.</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- System Status & Security -->
+                <div class="drion-card p-6 rounded-2xl border space-y-4">
+                  <h4
+                    class="font-bold text-lg border-b border-neutral-700/40 pb-3"
+                  >
+                    Security & Compliance
+                  </h4>
+                  <div class="space-y-3 text-xs">
+                    <div
+                      class="flex items-center justify-between p-3 rounded-xl drion-card-sub border border-neutral-700/40"
+                    >
+                      <div>
+                        <p class="font-bold text-sm">Multi-Factor Auth (MFA)</p>
+                        <p class="text-theme-secondary">
+                          Enforced via Corporate SSO
+                        </p>
+                      </div>
+                      <span
+                        class="px-2 py-1 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800 font-bold text-[10px]"
+                        >ENABLED</span
+                      >
+                    </div>
+
+                    <div
+                      class="flex items-center justify-between p-3 rounded-xl drion-card-sub border border-neutral-700/40"
+                    >
+                      <div>
+                        <p class="font-bold text-sm">Encryption Protocol</p>
+                        <p class="text-theme-secondary">
+                          AES-256 System Encryption
+                        </p>
+                      </div>
+                      <span
+                        class="px-2 py-1 rounded drion-card border border-neutral-700/60 font-bold text-[10px]"
+                        >ACTIVE</span
+                      >
+                    </div>
+                  </div>
+                  <button
+                    onclick="
+                      showToast(
+                        'API Tokens refreshed for current region',
+                        'info',
+                      )
+                    "
+                    class="drion-btn-secondary w-full py-2.5 rounded-xl text-xs uppercase font-bold tracking-wider"
+                  >
+                    Regenerate API Key
+                  </button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS DRAWER BACKDROP -->
+    <div
+      id="notificationsBackdrop"
+      onclick="toggleNotificationsDrawer()"
+      class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden"
+    ></div>
+
+    <!-- NOTIFICATIONS DRAWER -->
+    <div
+      id="notificationsDrawer"
+      class="fixed inset-y-0 right-0 w-full sm:w-96 drion-card border-l z-50 transform translate-x-full transition-transform duration-300 flex flex-col justify-between shadow-2xl"
+    >
+      <div
+        class="p-6 border-b border-neutral-700/40 flex items-center justify-between"
+      >
+        <div class="flex items-center space-x-2">
+          <i class="fa-solid fa-bell"></i>
+          <h3 class="font-bold text-lg">System Notifications</h3>
+        </div>
+        <button
+          onclick="toggleNotificationsDrawer()"
+          class="text-theme-secondary hover:text-primary"
+        >
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div
+        class="p-6 space-y-4 flex-1 overflow-y-auto text-xs"
+        id="notificationList"
+      >
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="p-4 border-t border-neutral-700/40">
+        <button
+          onclick="clearNotifications()"
+          class="w-full drion-btn-secondary py-2.5 rounded-xl text-xs uppercase font-bold tracking-wider"
+        >
+          Mark All As Read
+        </button>
+      </div>
+    </div>
+
+    <!-- NEW WORK ORDER MODAL -->
+    <div
+      id="ticketModal"
+      onclick="handleModalBackdropClick(event)"
+      class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden"
+    >
+      <div
+        class="drion-card w-full max-w-lg rounded-2xl border p-6 shadow-2xl space-y-5"
+      >
+        <div
+          class="flex items-center justify-between border-b border-neutral-700/40 pb-4"
+        >
+          <h3 class="font-bold text-xl">Issue Maintenance Work Order</h3>
+          <button
+            onclick="closeNewTicketModal()"
+            class="text-theme-secondary hover:text-primary"
+          >
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <form onsubmit="handleCreateTicket(event)" class="space-y-4 text-xs">
+          <div>
+            <label class="block text-theme-secondary mb-1 uppercase font-bold"
+              >Equipment / Asset Title</label
+            >
+            <input
+              type="text"
+              id="newTicketTitle"
+              required
+              placeholder="e.g. Central Chiller Unit #2 Breakdown"
+              class="w-full drion-input rounded-xl px-4 py-2.5 text-sm"
+            />
+          </div>
+
+          <div>
+            <label class="block text-theme-secondary mb-1 uppercase font-bold"
+              >Location / Facility</label
+            >
+            <input
+              type="text"
+              id="newTicketLocation"
+              required
+              placeholder="e.g. Dubai Marina Tower - Floor 4"
+              class="w-full drion-input rounded-xl px-4 py-2.5 text-sm"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-theme-secondary mb-1 uppercase font-bold"
+                >Priority Level</label
+              >
+              <select
+                id="newTicketPriority"
+                class="w-full drion-input rounded-xl px-3 py-2.5 text-xs font-semibold"
+              >
+                <option value="CRITICAL">CRITICAL</option>
+                <option value="HIGH">HIGH</option>
+                <option value="MEDIUM" selected>MEDIUM</option>
+                <option value="LOW">LOW</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-theme-secondary mb-1 uppercase font-bold"
+                >Assigned Technician</label
+              >
+              <select
+                id="newTicketTech"
+                class="w-full drion-input rounded-xl px-3 py-2.5 text-xs font-semibold"
+              >
+                <option value="Devon Lane">Devon Lane (HVAC)</option>
+                <option value="Rajesh Kumar">Rajesh Kumar (Electrical)</option>
+                <option value="Sanjay Mehta">Sanjay Mehta (Plumbing)</option>
+                <option value="Tariq Al-Mansoor">
+                  Tariq Al-Mansoor (Elevators)
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div
+            class="flex justify-end space-x-3 pt-4 border-t border-neutral-700/40"
+          >
+            <button
+              type="button"
+              onclick="closeNewTicketModal()"
+              class="drion-btn-secondary px-4 py-2.5 rounded-xl uppercase font-bold tracking-wider"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="drion-btn-primary px-5 py-2.5 rounded-xl uppercase font-bold tracking-wider"
+            >
+              Dispatch Order
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // State Store
+      const state = {
+        theme: localStorage.getItem("drion_theme") || "dark",
+        region: "India", // 'India' or 'UAE'
+        role: "Owner", // 'Owner' or 'Manager'
+        authMode: "signin", // 'signin' or 'signup'
+        currentView: "dashboard",
+
+        // Maintenance Tickets
+        tickets: [
+          {
+            id: "ORD-8921",
+            title: "Chiller Unit Pressure Fluctuation",
+            location: "Mumbai Business Bay",
+            priority: "CRITICAL",
+            tech: "Rajesh Kumar",
+            status: "IN_PROGRESS",
+          },
+          {
+            id: "ORD-8922",
+            title: "Main Elevator Cable Inspection",
+            location: "Dubai Marina Hub",
+            priority: "HIGH",
+            tech: "Tariq Al-Mansoor",
+            status: "IN_PROGRESS",
+          },
+          {
+            id: "ORD-8923",
+            title: "Server Room Backup Generator Test",
+            location: "Bengaluru Tech Park",
+            priority: "MEDIUM",
+            tech: "Sanjay Mehta",
+            status: "RESOLVED",
+          },
+          {
+            id: "ORD-8924",
+            title: "HVAC Air Filter Replacement",
+            location: "Abu Dhabi Hub",
+            priority: "LOW",
+            tech: "Devon Lane",
+            status: "RESOLVED",
+          },
+          {
+            id: "ORD-8925",
+            title: "Fire Suppression Valve Check",
+            location: "Delhi Cyber City",
+            priority: "CRITICAL",
+            tech: "Rajesh Kumar",
+            status: "CRITICAL",
+          },
+        ],
+
+        // Notifications
+        notifications: [
+          {
+            id: 1,
+            title: "Urgent Work Order Assigned",
+            detail: "ORD-8921 assigned to Rajesh Kumar in India.",
+            time: "5 mins ago",
+            read: false,
+          },
+          {
+            id: 2,
+            title: "Monthly Financial Audit Complete",
+            detail: "UAE region quarterly tax logs finalized.",
+            time: "1 hour ago",
+            read: false,
+          },
+          {
+            id: 3,
+            title: "System Security Patch v4.8",
+            detail: "All active clusters updated automatically.",
+            time: "4 hours ago",
+            read: true,
+          },
+        ],
+      };
+
+      // Window Onload Flow - Handles startup splash sequence
+      window.onload = function () {
+        applyTheme(state.theme);
+
+        setTimeout(() => {
+          const splash = document.getElementById("startupSplash");
+          if (splash) {
+            splash.style.transition = "opacity 0.5s ease";
+            splash.style.opacity = "0";
+
+            setTimeout(() => {
+              splash.classList.add("hidden");
+              document
+                .getElementById("appContainer")
+                .classList.remove("hidden");
+            }, 500);
+          }
+        }, 1200);
+      };
+
+      // Keyboard Shortcut: ESC to close modals/drawers
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closeNewTicketModal();
+          const drawer = document.getElementById("notificationsDrawer");
+          if (drawer && !drawer.classList.contains("translate-x-full")) {
+            toggleNotificationsDrawer();
+          }
+          closeMobileSidebar();
+        }
+      });
+
+      // Theme Switcher Functions
+      function applyTheme(theme) {
+        state.theme = theme;
+        localStorage.setItem("drion_theme", theme);
+        const html = document.documentElement;
+
+        if (theme === "light") {
+          html.classList.remove("dark");
+          html.classList.add("light");
+          document.getElementById("themeToggleIcon").className =
+            "fa-solid fa-sun";
+          document.getElementById("themeToggleText").innerText = "Light";
+          document.getElementById("headerThemeIcon").className =
+            "fa-solid fa-sun";
+
+          const darkBtn = document.getElementById("themeBtnDark");
+          const lightBtn = document.getElementById("themeBtnLight");
+          if (darkBtn && lightBtn) {
+            darkBtn.classList.remove("selectable-active");
+            lightBtn.classList.add("selectable-active");
+          }
+        } else {
+          html.classList.remove("light");
+          html.classList.add("dark");
+          document.getElementById("themeToggleIcon").className =
+            "fa-solid fa-moon";
+          document.getElementById("themeToggleText").innerText = "Dark";
+          document.getElementById("headerThemeIcon").className =
+            "fa-solid fa-moon";
+
+          const darkBtn = document.getElementById("themeBtnDark");
+          const lightBtn = document.getElementById("themeBtnLight");
+          if (darkBtn && lightBtn) {
+            lightBtn.classList.remove("selectable-active");
+            darkBtn.classList.add("selectable-active");
+          }
+        }
+        renderChart();
+      }
+
+      function toggleTheme() {
+        setTheme(state.theme === "dark" ? "light" : "dark");
+      }
+
+      function setTheme(theme) {
+        applyTheme(theme);
+        showToast(`Theme switched to ${theme.toUpperCase()} mode`, "info");
+      }
+
+      // Mobile Sidebar Controls
+      function toggleMobileSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const backdrop = document.getElementById("sidebarBackdrop");
+        if (sidebar.classList.contains("-translate-x-full")) {
+          sidebar.classList.remove("-translate-x-full");
+          backdrop.classList.remove("hidden");
+        } else {
+          sidebar.classList.add("-translate-x-full");
+          backdrop.classList.add("hidden");
+        }
+      }
+
+      function closeMobileSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const backdrop = document.getElementById("sidebarBackdrop");
+        if (sidebar) sidebar.classList.add("-translate-x-full");
+        if (backdrop) backdrop.classList.add("hidden");
+      }
+
+      // Auth Tab Switching
+      function switchAuthTab(mode) {
+        state.authMode = mode;
+        const tabIn = document.getElementById("tabSignIn");
+        const tabUp = document.getElementById("tabSignUp");
+        const nameGroup = document.getElementById("signupNameGroup");
+        const submitBtn = document.getElementById("authSubmitBtn");
+
+        if (mode === "signup") {
+          tabUp.className =
+            "text-base sm:text-lg font-bold tracking-wider uppercase pb-2 border-b-2 border-current text-primary";
+          tabIn.className =
+            "text-base sm:text-lg font-bold tracking-wider uppercase pb-2 border-b-2 border-transparent text-theme-muted hover:text-theme-secondary";
+          nameGroup.classList.remove("hidden");
+          submitBtn.innerText = "Register Enterprise Account";
+        } else {
+          tabIn.className =
+            "text-base sm:text-lg font-bold tracking-wider uppercase pb-2 border-b-2 border-current text-primary";
+          tabUp.className =
+            "text-base sm:text-lg font-bold tracking-wider uppercase pb-2 border-b-2 border-transparent text-theme-muted hover:text-theme-secondary";
+          nameGroup.classList.add("hidden");
+          submitBtn.innerText = "Access Enterprise Workspace";
+        }
+      }
+
+      // Auth Region Selection
+      function selectAuthRegion(region) {
+        state.region = region;
+        const indCard = document.getElementById("regionIndia");
+        const uaeCard = document.getElementById("regionUAE");
+
+        if (region === "India") {
+          indCard.classList.add("selectable-active");
+          uaeCard.classList.remove("selectable-active");
+        } else {
+          uaeCard.classList.add("selectable-active");
+          indCard.classList.remove("selectable-active");
+        }
+      }
+
+      // Auth Role Selection
+      function selectAuthRole(role) {
+        state.role = role;
+        const ownerCard = document.getElementById("roleOwner");
+        const mgrCard = document.getElementById("roleManager");
+
+        if (role === "Owner") {
+          ownerCard.classList.add("selectable-active");
+          mgrCard.classList.remove("selectable-active");
+        } else {
+          mgrCard.classList.add("selectable-active");
+          ownerCard.classList.remove("selectable-active");
+        }
+      }
+
+      // Demo Account Quick Loader
+      function loadDemoAccount(role, region) {
+        selectAuthRole(role);
+        selectAuthRegion(region);
+        if (role === "Owner") {
+          document.getElementById("authEmail").value =
+            "owner@drion-enterprise.com";
+        } else {
+          document.getElementById("authEmail").value =
+            "manager@drion-enterprise.com";
+        }
+        showToast(`Loaded ${role} (${region}) Demo Credentials`, "info");
+      }
+
+      // Password Eye Toggle
+      function togglePasswordVisibility() {
+        const pwd = document.getElementById("authPassword");
+        const eye = document.getElementById("passwordEye");
+        if (pwd.type === "password") {
+          pwd.type = "text";
+          eye.className = "fa-solid fa-eye-slash";
+        } else {
+          pwd.type = "password";
+          eye.className = "fa-solid fa-eye";
+        }
+      }
+
+      // Handle Auth Submission
+      function handleAuthSubmit(e) {
+        e.preventDefault();
+        const email = document.getElementById("authEmail").value;
+        const nameInput = document.getElementById("authName").value;
+        const userName =
+          nameInput ||
+          (email.startsWith("manager") ? "Devon Lane" : "Alexander Vance");
+
+        document.getElementById("authView").classList.add("hidden");
+        document.getElementById("workspaceView").classList.remove("hidden");
+
+        updateUserSessionUI(userName);
+        showToast(
+          `Authenticated as ${state.role} [${state.region} Cluster]`,
+          "success",
+        );
+        renderDashboardData();
+      }
+
+      function handleLogout() {
+        document.getElementById("workspaceView").classList.add("hidden");
+        document.getElementById("authView").classList.remove("hidden");
+        closeMobileSidebar();
+        showToast("Signed out of DRION SaaS Workspace", "info");
+      }
+
+      function updateUserSessionUI(name) {
+        document.getElementById("userNameDisplay").innerText = name;
+        document.getElementById("userRoleDisplay").innerText =
+          state.role === "Owner"
+            ? "👑 Business Owner"
+            : "🛠️ Maintenance Manager";
+        document.getElementById("userAvatar").innerText = name
+          .split(" ")
+          .map((n) => n[0])
+          .join("");
+
+        // Update Settings inputs
+        document.getElementById("settingsName").value = name;
+        document.getElementById("settingsRole").value =
+          state.role === "Owner" ? "Business Owner" : "Maintenance Manager";
+
+        // Update Header Region Display
+        if (state.region === "India") {
+          document.getElementById("headerRegionFlag").innerText = "🇮🇳";
+          document.getElementById("headerRegionText").innerText = "India (INR)";
+          document.getElementById("activeRegionBadge").innerText = "🇮🇳 IND";
+        } else {
+          document.getElementById("headerRegionFlag").innerText = "🇦🇪";
+          document.getElementById("headerRegionText").innerText = "UAE (AED)";
+          document.getElementById("activeRegionBadge").innerText = "🇦🇪 UAE";
+        }
+
+        // Role-based navigation visibility tweak
+        if (state.role === "Manager") {
+          document.getElementById("welcomeHeadline").innerText =
+            `Maintenance Dispatch Center — ${name}`;
+          document.getElementById("welcomeSubtext").innerText =
+            `Active work orders, assigned technicians, and maintenance priority tasks.`;
+        } else {
+          document.getElementById("welcomeHeadline").innerText =
+            `Welcome back, ${name}`;
+          document.getElementById("welcomeSubtext").innerText =
+            `Showing real-time telemetry, revenue performance, and facility health.`;
+        }
+      }
+
+      // Region Switcher
+      function switchRegion(region) {
+        state.region = region;
+        selectAuthRegion(region);
+        updateUserSessionUI(
+          document.getElementById("userNameDisplay").innerText,
+        );
+        document.getElementById("regionDropdown").classList.add("hidden");
+
+        if (state.currentView === "dashboard") renderDashboardData();
+        if (state.currentView === "business") renderBusinessUnits();
+
+        showToast(`Switched active operational cluster to ${region}`, "info");
+      }
+
+      function toggleRegionDropdown() {
+        const dropdown = document.getElementById("regionDropdown");
+        dropdown.classList.toggle("hidden");
+      }
+
+      function navigateTo(view) {
+        state.currentView = view;
+        closeMobileSidebar();
+
+        // Nav Button Styling Reset
+        const navs = [
+          "navDashboard",
+          "navMaintenance",
+          "navBusiness",
+          "navSettings",
+        ];
+        navs.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.className =
+              "w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm text-left transition font-semibold text-theme-secondary hover:text-primary drion-btn-secondary border-transparent";
+          }
+        });
+
+        // Activate Target
+        const activeNav = document.getElementById(
+          "nav" + view.charAt(0).toUpperCase() + view.slice(1),
+        );
+        if (activeNav) {
+          activeNav.className =
+            "w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm text-left transition font-semibold drion-btn-secondary selectable-active";
+        }
+
+        // Hide All Views
+        document.getElementById("viewDashboard").classList.add("hidden");
+        document.getElementById("viewMaintenance").classList.add("hidden");
+        document.getElementById("viewBusiness").classList.add("hidden");
+        document.getElementById("viewSettings").classList.add("hidden");
+
+        const viewTitleMap = {
+          dashboard: "Executive Dashboard",
+          maintenance: "Facility Maintenance Hub",
+          business: "Business Operations & Assets",
+          settings: "Platform Settings",
+        };
+        document.getElementById("pageTitle").innerText = viewTitleMap[view];
+
+        if (view === "dashboard") {
+          document.getElementById("viewDashboard").classList.remove("hidden");
+          renderDashboardData();
+        } else if (view === "maintenance") {
+          document.getElementById("viewMaintenance").classList.remove("hidden");
+          renderTicketsTable();
+        } else if (view === "business") {
+          document.getElementById("viewBusiness").classList.remove("hidden");
+          renderBusinessUnits();
+        } else if (view === "settings") {
+          document.getElementById("viewSettings").classList.remove("hidden");
+        }
+      }
+
+      // Render Dashboard KPIs based on Region and Currency
+      function renderDashboardData() {
+        const revEl = document.getElementById("kpiRevenue");
+        const locEl = document.getElementById("kpiLocations");
+
+        if (state.region === "India") {
+          revEl.innerText = "₹ 14,850,000";
+          locEl.innerText = "12 Hubs";
+        } else {
+          revEl.innerText = "AED 1,650,000";
+          locEl.innerText = "6 Hubs";
+        }
+
+        renderChart();
+      }
+
+      // High-DPI Crisp Canvas Rendering
+      function renderChart() {
+        const canvas = document.getElementById("analyticsChart");
+        if (!canvas || canvas.offsetParent === null) return;
+
+        const rect = canvas.parentElement.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+
+        const ctx = canvas.getContext("2d");
+        ctx.scale(dpr, dpr);
+
+        const w = rect.width;
+        const h = rect.height;
+        const isDark = state.theme === "dark";
+
+        ctx.clearRect(0, 0, w, h);
+
+        const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"];
+        const dataPoints =
+          state.region === "India"
+            ? [85, 92, 105, 120, 115, 138, 148]
+            : [45, 52, 60, 68, 72, 80, 95];
+
+        const padding = 35;
+        const graphW = w - padding * 2;
+        const graphH = h - padding * 2;
+        const maxVal = 160;
+
+        // Draw grid lines
+        ctx.strokeStyle = isDark
+          ? "rgba(255, 255, 255, 0.08)"
+          : "rgba(0, 0, 0, 0.08)";
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 4; i++) {
+          const y = padding + (graphH / 4) * i;
+          ctx.beginPath();
+          ctx.moveTo(padding, y);
+          ctx.lineTo(w - padding, y);
+          ctx.stroke();
+        }
+
+        // Plot gradient fill
+        const gradient = ctx.createLinearGradient(0, padding, 0, h - padding);
+        if (isDark) {
+          gradient.addColorStop(0, "rgba(255, 255, 255, 0.15)");
+          gradient.addColorStop(1, "rgba(255, 255, 255, 0.0)");
+        } else {
+          gradient.addColorStop(0, "rgba(15, 23, 42, 0.15)");
+          gradient.addColorStop(1, "rgba(15, 23, 42, 0.0)");
+        }
+
+        ctx.beginPath();
+        dataPoints.forEach((val, idx) => {
+          const x = padding + (graphW / (labels.length - 1)) * idx;
+          const y = h - padding - (val / maxVal) * graphH;
+          if (idx === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.lineTo(padding + graphW, h - padding);
+        ctx.lineTo(padding, h - padding);
+        ctx.closePath();
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // Plot line
+        ctx.beginPath();
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = isDark ? "#ffffff" : "#0f172a";
+
+        dataPoints.forEach((val, idx) => {
+          const x = padding + (graphW / (labels.length - 1)) * idx;
+          const y = h - padding - (val / maxVal) * graphH;
+          if (idx === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        // Plot points & labels
+        dataPoints.forEach((val, idx) => {
+          const x = padding + (graphW / (labels.length - 1)) * idx;
+          const y = h - padding - (val / maxVal) * graphH;
+
+          ctx.beginPath();
+          ctx.arc(x, y, 4, 0, Math.PI * 2);
+          ctx.fillStyle = isDark ? "#ffffff" : "#0f172a";
+          ctx.fill();
+
+          // Label
+          ctx.font = '600 11px "Plus Jakarta Sans", sans-serif';
+          ctx.fillStyle = isDark ? "#94a3b8" : "#64748b";
+          ctx.textAlign = "center";
+          ctx.fillText(labels[idx], x, h - 10);
+        });
+      }
+
+      function renderTicketsTable(filtered = state.tickets) {
+        const tbody = document.getElementById("ticketTableBody");
+        if (!tbody) return;
+
+        tbody.innerHTML = "";
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-theme-secondary font-medium">No maintenance tickets found matching criteria.</td></tr>`;
+          return;
+        }
+
+        filtered.forEach((ticket) => {
+          const tr = document.createElement("tr");
+          tr.className = "hover:bg-neutral-800/20 transition-colors";
+
+          const priorityColors = {
+            CRITICAL: "text-red-400 bg-red-950/60 border-red-800",
+            HIGH: "text-amber-400 bg-amber-950/60 border-amber-800",
+            MEDIUM: "text-blue-400 bg-blue-950/60 border-blue-800",
+            LOW: "text-theme-secondary drion-card border-neutral-700/60",
+          };
+
+          tr.innerHTML = `
+                    <td class="p-4 font-mono text-xs text-theme-secondary font-bold">${ticket.id}</td>
+                    <td class="p-4 font-bold text-sm">${ticket.title}</td>
+                    <td class="p-4 text-xs text-theme-secondary">${ticket.location}</td>
+                    <td class="p-4">
+                        <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold border ${priorityColors[ticket.priority]}">
+                            ${ticket.priority}
+                        </span>
+                    </td>
+                    <td class="p-4 text-xs font-medium">${ticket.tech}</td>
+                    <td class="p-4">
+                        <span class="text-xs uppercase tracking-wider font-extrabold ${ticket.status === "RESOLVED" ? "text-emerald-500" : "text-amber-500"}">
+                            ${ticket.status.replace("_", " ")}
+                        </span>
+                    </td>
+                    <td class="p-4 text-right">
+                        ${
+                          ticket.status !== "RESOLVED"
+                            ? `
+                            <button onclick="resolveTicket('${ticket.id}')" class="drion-btn-secondary px-2.5 py-1 rounded-lg text-xs font-bold hover:border-emerald-500 text-emerald-400" title="Mark Resolved">
+                                <i class="fa-solid fa-check mr-1"></i> Resolve
+                            </button>
+                        `
+                            : `
+                            <span class="text-xs text-emerald-500 font-bold"><i class="fa-solid fa-circle-check"></i> Done</span>
+                        `
+                        }
+                    </td>
+                `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // Fixed Ticket Filtering System
+      function filterTickets(type) {
+        const filterBtnMap = {
+          ALL: "filterAll",
+          CRITICAL: "filterCritical",
+          IN_PROGRESS: "filterInProgress",
+          RESOLVED: "filterResolved",
+        };
+
+        Object.values(filterBtnMap).forEach((id) => {
+          const btn = document.getElementById(id);
+          if (btn) {
+            btn.className =
+              "px-4 py-2 rounded-xl text-xs font-bold drion-btn-secondary border-transparent";
+          }
+        });
+
+        const activeBtnId = filterBtnMap[type];
+        if (activeBtnId) {
+          const activeBtn = document.getElementById(activeBtnId);
+          if (activeBtn) {
+            activeBtn.className =
+              "px-4 py-2 rounded-xl text-xs font-bold drion-btn-secondary selectable-active";
+          }
+        }
+
+        if (type === "ALL") {
+          renderTicketsTable(state.tickets);
+        } else {
+          const filtered = state.tickets.filter(
+            (t) => t.priority === type || t.status === type,
+          );
+          renderTicketsTable(filtered);
+        }
+      }
+
+      function searchTickets() {
+        const query = document
+          .getElementById("ticketSearch")
+          .value.toLowerCase();
+        const results = state.tickets.filter(
+          (t) =>
+            t.title.toLowerCase().includes(query) ||
+            t.location.toLowerCase().includes(query) ||
+            t.id.toLowerCase().includes(query),
+        );
+        renderTicketsTable(results);
+      }
+
+      function resolveTicket(id) {
+        const ticket = state.tickets.find((t) => t.id === id);
+        if (ticket) {
+          ticket.status = "RESOLVED";
+          renderTicketsTable();
+          showToast(`Work order ${id} marked as RESOLVED`, "success");
+        }
+      }
+
+      // New Ticket Modal Controls
+      function openNewTicketModal() {
+        document.getElementById("ticketModal").classList.remove("hidden");
+      }
+
+      function closeNewTicketModal() {
+        document.getElementById("ticketModal").classList.add("hidden");
+      }
+
+      function handleModalBackdropClick(e) {
+        if (e.target.id === "ticketModal") {
+          closeNewTicketModal();
+        }
+      }
+
+      function handleCreateTicket(e) {
+        e.preventDefault();
+        const title = document.getElementById("newTicketTitle").value;
+        const location = document.getElementById("newTicketLocation").value;
+        const priority = document.getElementById("newTicketPriority").value;
+        const tech = document.getElementById("newTicketTech").value;
+
+        const newOrd = {
+          id: "ORD-" + Math.floor(1000 + Math.random() * 9000),
+          title: title,
+          location: location,
+          priority: priority,
+          tech: tech,
+          status: "IN_PROGRESS",
+        };
+
+        state.tickets.unshift(newOrd);
+        closeNewTicketModal();
+        renderTicketsTable();
+
+        // Update badge count
+        const countEl = document.getElementById("maintenanceBadgeCount");
+        if (countEl) {
+          const activeCount = state.tickets.filter(
+            (t) => t.status !== "RESOLVED",
+          ).length;
+          countEl.innerText = activeCount;
+        }
+
+        showToast(`Dispatched order ${newOrd.id} to ${tech}`, "success");
+      }
+
+      function renderBusinessUnits() {
+        const grid = document.getElementById("businessUnitsGrid");
+        if (!grid) return;
+
+        const indiaUnits = [
+          {
+            name: "Mumbai Business Bay Hub",
+            type: "Primary Regional Facility",
+            staff: 142,
+            revenue: "₹ 8.2M/mo",
+            status: "Optimal",
+          },
+          {
+            name: "Bengaluru Tech Park Unit",
+            type: "Engineering & R&D Hub",
+            staff: 98,
+            revenue: "₹ 4.5M/mo",
+            status: "Optimal",
+          },
+          {
+            name: "Delhi Cyber City Office",
+            type: "Operations & Logistics",
+            staff: 64,
+            revenue: "₹ 2.15M/mo",
+            status: "Maintenance",
+          },
+        ];
+
+        const uaeUnits = [
+          {
+            name: "Dubai Marina Tech Tower",
+            type: "Regional HQ & Executive Hub",
+            staff: 85,
+            revenue: "AED 1.1M/mo",
+            status: "Optimal",
+          },
+          {
+            name: "Abu Dhabi Innovation Park",
+            type: "Autonomous Ops Center",
+            staff: 42,
+            revenue: "AED 550K/mo",
+            status: "Optimal",
+          },
+        ];
+
+        const units = state.region === "India" ? indiaUnits : uaeUnits;
+
+        grid.innerHTML = units
+          .map(
+            (u) => `
+                <div class="drion-card p-6 rounded-2xl border space-y-4">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h4 class="font-bold text-lg">${u.name}</h4>
+                            <p class="text-xs text-theme-secondary">${u.type}</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold border ${u.status === "Optimal" ? "text-emerald-400 bg-emerald-950/60 border-emerald-800" : "text-amber-400 bg-amber-950/60 border-amber-800"}">
+                            ${u.status}
+                        </span>
+                    </div>
+
+                    <div class="pt-3 border-t border-neutral-700/40 grid grid-cols-2 gap-4 text-xs">
+                        <div>
+                            <span class="text-theme-secondary font-semibold block">Active Staff</span>
+                            <span class="font-bold text-sm">${u.staff} Personnel</span>
+                        </div>
+                        <div>
+                            <span class="text-theme-secondary font-semibold block">Monthly Revenue</span>
+                            <span class="font-bold text-sm">${u.revenue}</span>
+                        </div>
+                    </div>
+                </div>
+            `,
+          )
+          .join("");
+      }
+
+      // Notifications Drawer
+      function toggleNotificationsDrawer() {
+        const drawer = document.getElementById("notificationsDrawer");
+        const backdrop = document.getElementById("notificationsBackdrop");
+        if (drawer) {
+          const isOpen = !drawer.classList.contains("translate-x-full");
+          if (isOpen) {
+            drawer.classList.add("translate-x-full");
+            backdrop.classList.add("hidden");
+          } else {
+            drawer.classList.remove("translate-x-full");
+            backdrop.classList.remove("hidden");
+            renderNotifications();
+          }
+        }
+      }
+
+      function renderNotifications() {
+        const container = document.getElementById("notificationList");
+        if (!container) return;
+
+        container.innerHTML = state.notifications
+          .map(
+            (n) => `
+                <div class="p-3 rounded-xl border border-neutral-700/40 drion-card-sub space-y-1 ${n.read ? "opacity-60" : ""}">
+                    <div class="flex items-center justify-between">
+                        <p class="font-bold text-sm">${n.title}</p>
+                        <span class="text-[10px] text-theme-muted font-medium">${n.time}</span>
+                    </div>
+                    <p class="text-theme-secondary text-xs">${n.detail}</p>
+                </div>
+            `,
+          )
+          .join("");
+
+        const unreadCount = state.notifications.filter((n) => !n.read).length;
+        const badge = document.getElementById("unreadNotifBadge");
+        if (badge) badge.innerText = unreadCount;
+      }
+
+      function clearNotifications() {
+        state.notifications.forEach((n) => (n.read = true));
+        renderNotifications();
+        showToast("All notifications marked as read", "info");
+      }
+
+      function triggerSystemAudit() {
+        showToast("Initiating automated cluster telemetry audit...", "info");
+        setTimeout(() => {
+          showToast("Telemetry sync complete. All systems nominal.", "success");
+        }, 1000);
+      }
+
+      // Toast Notification System
+      function showToast(message, type = "info") {
+        const container = document.getElementById("toastContainer");
+        if (!container) return;
+
+        const toast = document.createElement("div");
+        const icons = {
+          success: "fa-circle-check text-emerald-400",
+          info: "fa-circle-info text-blue-400",
+          warning: "fa-triangle-exclamation text-amber-400",
+        };
+
+        toast.className =
+          "drion-card p-4 rounded-xl border shadow-2xl flex items-center space-x-3 text-xs tracking-wide pointer-events-auto transform translate-y-2 opacity-0 transition-all duration-300";
+        toast.innerHTML = `
+                <i class="fa-solid ${icons[type] || icons["info"]} text-base"></i>
+                <span class="font-bold">${message}</span>
+            `;
+
+        container.appendChild(toast);
+
+        setTimeout(() => {
+          toast.classList.remove("translate-y-2", "opacity-0");
+        }, 10);
+
+        setTimeout(() => {
+          toast.classList.add("opacity-0", "translate-y-2");
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+
+      // Resize Listener for Canvas Responsiveness
+      let resizeTimeout;
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          if (state.currentView === "dashboard") {
+            renderChart();
+          }
+        }, 100);
+      });
+    </script>
+  </body>
+</html>
