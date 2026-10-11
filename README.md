@@ -1,52 +1,59 @@
-# Drion — Business Management & Compliance Platform
+# Drion — Business Compliance & Management Platform
 
-**Drion** is a SaaS (Software as a Service) platform designed to help businesses manage their documents, government compliance requirements, renewals, maintenance, and business operations in one organised workspace.
+**Simplifying business compliance, documentation, and maintenance.**
 
-## 🎯 Project Goal
+## About Drion
 
-The goal of Drion is to simplify business management by providing an accessible, professional, and easy-to-use platform for businesses operating in India and the UAE.
+Drion is a SaaS (Software as a Service) platform concept designed to help businesses manage important documents, track renewal deadlines, and organise maintenance requirements in one place.
 
-## ✨ Key Features
+The goal is to make business administration simpler, more organised, and more accessible for businesses operating in India and the UAE.
 
-- **Country Selection:** Support for businesses operating in India and the UAE.
-- **Multilingual Interface:** Language options for India, with Arabic and English support for the UAE.
-- **Authentication Interface:** Sign-in and sign-up pages with country and role selection.
-- **Role-Based Dashboards:** Separate interfaces for business owners and maintenance managers.
-- **Document Management:** Organise important business documents.
-- **Renewal Tracking:** Help businesses track upcoming document renewals and compliance requirements.
-- **Maintenance Management:** Allow maintenance managers to communicate repair needs to business owners.
-- **Business Analytics:** Provide owners with revenue and expense graphs and percentage changes.
-- **Staff Management:** Support staff-related management features.
-- **FAQ Chatbot:** Help users find information about upcoming renewals, documents, and repair costs.
-- **Customisable Workspace:** A professional business dashboard inspired by modern desktop operating systems.
-- **Theme Support:** Dark and light modes.
-- **Responsive Design:** Aim to make the interface usable across different screen sizes.
+## 💡 Original Idea & AI Development
 
-## 🛠️ Technology Stack
+**The idea behind Drion is my own.** I came up with the concept, defined its purpose, planned its features, and established the vision for the platform.
 
-- HTML — Page structure
-- CSS — Styling, layouts, animations, and responsive design
-- JavaScript — Interactions and application logic
-- Browser Local Storage — Client-side data persistence during development
+The website's design and code have been created with the assistance of AI. AI tools are used to help turn my ideas and requirements into a working website.
 
-## 🚀 Project Vision
+I guide the project's direction, decide which features it should include, and work towards improving the platform.
 
-Drion aims to become an affordable business management and compliance platform that makes administrative work simpler for small and medium-sized businesses.
+This project represents my interest in entrepreneurship, software development, and building practical technology solutions.
 
-The long-term vision is to develop a secure, reliable, and scalable SaaS product with real authentication, trusted data storage, accurate compliance information, and integrations with relevant services.
+## 🚀 Planned Features
 
-## 🔒 Development Notes
+- **Document Management:** Organise important business documents in one place.
+- **Renewal Tracking:** Keep track of upcoming document and licence renewals.
+- **Country Support:** Designed with businesses in India and the UAE in mind.
+- **Role-Based Dashboards:** Separate experiences for business owners and maintenance managers.
+- **Business Analytics:** Help owners understand revenue and expenses through visual summaries.
+- **Maintenance Management:** Track maintenance requirements and communicate repair needs.
+- **Multilingual Interface:** Planned language support for Indian languages, English, and Arabic.
+- **FAQ Chatbot:** Help users find information about renewals, documents, and maintenance.
 
-The current development version may use browser-based storage and simulated functionality. These are suitable for prototyping but are not a replacement for secure server-side authentication, protected databases, or production-grade security.
+*Features are planned and may change as development progresses.*
 
-Government compliance information and renewal requirements must be verified against official sources before being relied upon.
+## 🎯 Vision
+
+My vision is to develop Drion into a useful, accessible, and reliable business management platform that reduces administrative complexity and helps businesses stay organised.
+
+## 🛠️ Development
+
+Drion is being developed as a personal project with AI-assisted website creation.
+
+The design, features, and development direction are guided by my own ideas and decisions. The implementation and functionality will continue to evolve as the project develops.
 
 ## 📌 Project Status
 
-**Status:** In development.
+**Status:** In Development
 
-Drion is a long-term project focused on building a polished user experience and progressively adding reliable business-management functionality.
+Drion is a work in progress. Features, functionality, and the overall user experience may change as I continue developing the project.
+
+## 👨‍💻 Creator
+
+**Concept and Project Vision:** Srithik Sai  
+**Website Development:** Created with AI assistance
+
+Drion is an independent project built around my own idea of making business administration easier through technology.
 
 ---
 
-*Built as an ambitious software project focused on business productivity, compliance management, and accessible technology.*
+*Drion — One platform. Better business management.*
